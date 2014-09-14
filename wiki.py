@@ -6,7 +6,13 @@ import re
 import os
 import sys
 from Queue import Queue
- 
+
+def autocomplete(input):
+    url="https://en.wikipedia.org/w/api.php?action=query&list=allpages&apfrom=" + input + "&aplimit=5&format=json"
+    r5 = requests.post(url)
+    r5 = r5.json()['query']['allpages']
+    return r5
+
 def req(page):
     params = '?action=query&titles=' + page + '&prop=links&pllimit=900&format=json'
     params3 = params+'&lgtoken=%s'% token
@@ -82,7 +88,9 @@ params2 = params+'&lgtoken=%s'% token
 # Confirm token; should give "Success"
 r2 = requests.post(baseurl+params2,cookies=r1.cookies)
 
-bfs("In the Pocket (Commodores album)", None)
+autocomplete("USA")
+
+bfs("Bompas Township, Ontario", None)
 
 parent = conn.cursor().execute("SELECT NAME, PARENT FROM LINKS WHERE NAME=:pageName", {'pageName':'Adolf Hitler'}).fetchone()
 
