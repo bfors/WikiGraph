@@ -1,8 +1,11 @@
 <html>
 <head>
-<title>Hitler sucks 69</title>
-<script src="external/jquery/jquery.js"></script>
-<script src="jquery-ui.js"></script>
+    <title>Wikirace: Shortest Path Calculator</title>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/themes/smoothness/jquery-ui.css" />
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
+<script src="socket.js"></script>
+<script src="functionality.js"></script>
 
 <style>
 .center {
@@ -17,33 +20,22 @@
 }
 </style>
 
-<script>
-$( document ).ready(function() {
-	$('#startInput').on('input', function() {
-		tags = [];
-		$('#startInput').autocomplete({
-			source: tags
-		});
-	});
-});
-</script>
 </head>
-<body>
-<div class='center'>
-	<div class='left'>
-	From: <input id='startInput' type="text" value="My little pony"></input>
-	<br>
-	<button>Random Page</button>
-	</div>
-	<div class='right'>
-	To: <input id='targetInput' type="text" value="Adolph Hitler"></input>
-	<br/>
-	<button>Random Page</button>
-	</div>
+    <body>
+        <div class='center'>
+            <div class='left'>
+                From: <input id='startInput' type="text" value="My little pony"></input>
+                <br>
+            </div>
+            <div class='right'>
+                To: <input id='endInput' type="text" value="Adolph Hitler"></input>
+                <br/>
+                <button id="calculate">Calculate!</button>
+            </div>
 
-	<div style='overflow:auto;height:60%;border:1px solid'></div>
-	<br/>
-	<div style='overflow-y:auto;height:35%;border:1px solid'></div>
-</div>
-</body>
+            <div style='overflow:auto;height:60%;border:1px solid'></div>
+            <br/>
+            <textarea id="outputtext" rows="20" cols="50" class="center"></textarea>
+        </div>
+    </body>
 </html>
