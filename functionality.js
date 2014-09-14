@@ -1,19 +1,8 @@
 $( document ).ready(function() {
-    $('#startInput').on('input', function() {
-        tags = [];
-        $('#startInput').autocomplete({
-            source: tags
-        });
-    });
-    
-    $('#endInput').on('input', function() {
-        tags = [];
-        $('#endInput').autocomplete({
-            source: tags
-        });
-    });
-    
     $('#calculate').click(function() {
         doSend('compute::' + $('#startInput').val() + '::' + $('#endInput').val());
+        $('#calculate').attr("disabled", "disabled");
+        $('#startInput').attr("disabled", "disabled");
+        $('#endInput').attr("disabled", "disabled");
     });
 });

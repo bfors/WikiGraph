@@ -5,6 +5,7 @@ import sqlite3
 import re
 import os
 import sys
+import json
 from Queue import Queue
 
 reload(sys)
@@ -25,6 +26,30 @@ params2 = params+'&lgtoken=%s'% token
 r2 = requests.post(baseurl+params2,cookies=r1.cookies)
 
 class Socket(WebSocket):
+    
+    def getGraphData(self):
+        # create new db
+        conn = sqlite3.connect(r'/tmp/treedb.db')
+        # print page trace
+        fin = conn.cursor().execute("SELECT NAME, PARENT FROM LINKS WHERE NAME=:pageName", {'pageName':to}).fetchone()
+        cursor = conn.cursor()
+        parent = cursor.execute("SELECT NAME, PARENT FROM LINKS WHERE ROWID=:id", {'id':fin[1]}).fetchone()
+        row = cursor.lastrowid
+        children = conn.cursor().execute("SELECT NAME, PARENT FROM LINKS WHERE PARENT=:id", {'id':fin[1]}).fetchall()
+        
+        array = {}
+        while parent is not None:
+            childArr = [array]
+            if (children is not None):
+                for child in children:
+                    childArr.append({'name': child[0], 'children': [], 'size': 100})
+            array = {'name': parent[0], 'children': childArr, 'size': 100}
+            children = conn.cursor().execute("SELECT NAME, PARENT FROM LINKS WHERE PARENT=:id AND ROWID != :id2", {'id':parent[1],'id2':row}).fetchall()
+            cursor = conn.cursor()
+            parent = cursor.execute("SELECT NAME, PARENT FROM LINKS WHERE ROWID=:id", {'id':parent[1]}).fetchone()
+            row = cursor.lastrowid
+    
+            self.sendMessage("getGraphData::" + json.dumps(array))
     
     def req(self, page):
         params3 = '?action=query&titles=' + page + '&prop=links&pllimit=900&format=json'
@@ -102,6 +127,11 @@ class Socket(WebSocket):
         while parent is not None:
             self.sendMessage(" + " + str(parent[0]))
             parent = conn.cursor().execute("SELECT NAME, PARENT FROM LINKS WHERE ROWID=:id", {'id':parent[1]}).fetchone()
+        
+        conn.commit()
+        
+        self.sendMessage("")
+        self.sendMessage(":complete:")
     
     def handleMessage(self):
         if self.data is None:
@@ -127,16 +157,9 @@ class Socket(WebSocket):
                 else:
                     raise Exception("incorrect number of arguments")
             # getAutocomplete command
-            elif cmd == "getAutocomplete":
-                # check arguments
-                if len(args) == 1:
-                    if not args[0]:
-                        raise Exception("'from' page is empty")
-                    else:
-                        #run getAutocomplete
-                        self.getAutocomplete(args[0])
-                else:
-                    raise Exception("incorrect number of arguments")
+            elif cmd == "getGraphData":
+                #run getGraphData
+                self.getGraphData()
             # catch excess messages
             else:
                 self.sendMessage("invalid command: " + cmd)

@@ -19,7 +19,16 @@ function onClose(evt)
 
 function onMessage(evt)
 {
-    writeToScreen(evt.data + '\n');
+    if (evt.data == ':complete:')
+    {
+        $('#calculate').removeAttr("disabled");
+        $('#startInput').removeAttr("disabled");
+        $('#endInput').removeAttr("disabled");
+    }
+    else
+    {
+        writeToScreen(evt.data + '\n');
+    }
 }
 
 function onError(evt)
@@ -30,7 +39,7 @@ function onError(evt)
 
 function doSend(message)
 {
-    writeToScreen('socket: command sent\n');
+    writeToScreen('socket: command sent: ' + message + '\n');
     websocket.send(message);
 }
 
