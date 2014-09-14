@@ -7,6 +7,20 @@ import os
 import sys
 from Queue import Queue
 
+class Stack:
+  def __init__(self):
+    self.__storage = []
+
+  def isEmpty(self):
+    return len(self.__storage) == 0
+
+  def push(self,p):
+    self.__storage.append(p)
+
+  def pop(self):
+    return self.__storage.pop()
+
+
 def autocomplete(input):
     url="https://en.wikipedia.org/w/api.php?action=query&list=allpages&apfrom=" + input + "&aplimit=5&format=json"
     r5 = requests.post(url)
@@ -90,16 +104,27 @@ r2 = requests.post(baseurl+params2,cookies=r1.cookies)
 
 autocomplete("USA")
 
-bfs("Bompas Township, Ontario", None)
+bfs("Nazi Party", None)
 
 parent = conn.cursor().execute("SELECT NAME, PARENT FROM LINKS WHERE NAME=:pageName", {'pageName':'Adolf Hitler'}).fetchone()
 
 print ""
 print "Page trace:"
 
+s = Stack()
 while parent is not None:
-    print " + " + parent[0]
+    s.push(parent[0])
     parent = conn.cursor().execute("SELECT NAME, PARENT FROM LINKS WHERE ROWID=:id", {'id':parent[1]}).fetchone()
+
+while not s.isEmpty():
+    print " + " + s.pop()
+
 
 print ""
 print "The end!"
+
+
+
+
+
+
